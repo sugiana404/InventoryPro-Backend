@@ -1,10 +1,34 @@
-let USER_MODEL = [
-    {
-        id:1,
-        name: "user 0",
-        email: "email@email.com",
-        password: "password",
-        role: "admin",
-        status: "active",
+const { DataTypes } = require('sequelize');
+const sequelize = require("../db/db")
+
+const User = sequelize.define('User', {
+    userId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    createdAt : {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        onUpdate: sequelize.literal('CURRENT_TIMESTAMP'),
     }
-]
+})
+
+module.exports = User;

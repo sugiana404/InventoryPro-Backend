@@ -6,7 +6,8 @@ const {
 
 const GetAllUsers = (req,res) => {
     const userList = QueryListOfUsers();
-    return res.json(userList)
+    console.log(process.env.DB_USER)
+    return res.json({"status": 200})
 }
 
 const GetUser = (req,res) => {
