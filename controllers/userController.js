@@ -5,7 +5,7 @@ const {
 } = require("../service/userService.js")
 
 const GetAllUsers = (req,res) => {
-    const userList = QueryListOfUsers();
+    QueryListOfUsers();
     console.log(process.env.DB_USER)
     return res.json({"status": 200})
 }
