@@ -1,4 +1,4 @@
-module.exports ={
-    secretKey: 'secret_key',
-    expiresIn: '1h',
-}
+module.exports = {
+  secretKey: "secret_key",
+  expiresIn: "1h",
+};

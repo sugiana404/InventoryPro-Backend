@@ -1,36 +1,32 @@
 // Global Import
-const express = require('express')
+const express = require("express");
 
 // Local Import
-const sequelize = require('./db/db');
+const sequelize = require("./db/sequelize");
 
 // Routes
-const productRoutes = require('./routes/productRoutes')
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
 
-// Intialize DB
-async function initializeDatabase() {
-    try {
-        await sequelize.sync({alter:true});
-        console.log('Database synchronized successfully');
-    } catch (error) {
-        console.error('Error synchronizing database:', error);
-    }
-}
-
-initializeDatabase();
-
+// Initialize server
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Initialize DB
+async function initializeDatabase() {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log("Database synchronized successfully");
+  } catch (error) {
+    console.error("Error synchronizing database:", error);
+  }
+}
+initializeDatabase();
 
 // Middleware
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/user',userRoutes);
-app.use('/api/product', productRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
-    console.log(`server is running on port ${port}`);
-})
+  console.log(`server is running on port ${port}`);
+});
