@@ -1,41 +1,39 @@
 // Global Import
 const { DataTypes } = require("sequelize");
-
 // Local Import
 const sequelize = require("../db/sequelize");
 
-const User = sequelize.define("User", {
-  userId: {
+const Product = sequelize.define("Product", {
+  productId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  firstName: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  lastName: {
+  stock: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  sold: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  supplier: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
-  },
-  updatedAt: {
+  lastUpdate: {
     type: DataTypes.DATE,
     defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
     onUpdate: sequelize.literal("CURRENT_TIMESTAMP"),
   },
 });
 
-module.exports = User;
+module.exports = Product;

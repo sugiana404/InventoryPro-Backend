@@ -1,5 +1,8 @@
+// Global Import
 const { ValidationError } = require("sequelize");
-const authService = require("../service/authService");
+
+// Local Import
+const authService = require("../services/authService");
 
 async function signup(req, res) {
   const { firstName, lastName, email, password } = req.body;

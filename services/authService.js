@@ -37,8 +37,4 @@ async function login(email, password) {
   }
 }
 
-async function validatePassword(user, password) {
-  return bcrypt.compare(password, user.password);
-}
-
-module.exports = { createUser, validatePassword, login };
+module.exports = { createUser, login };

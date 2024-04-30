@@ -1,7 +1,10 @@
-const jwtConfig = require("../config/jwtConfig");
-const jwt = import("jsonwebtoken");
+// Global Import
+const jwt = require("jsonwebtoken");
 
-const authenticateToken = (req, res, next) => {
+// Local Import
+const jwtConfig = require("../config/jwtConfig");
+
+function authenticateToken(req, res, next) {
   const token = req.headers["authorization"];
 
   if (!token) {
@@ -15,6 +18,6 @@ const authenticateToken = (req, res, next) => {
     req.user = decoded;
     next();
   });
-};
+}
 
 module.exports = { authenticateToken };
