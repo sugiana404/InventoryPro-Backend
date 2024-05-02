@@ -27,12 +27,19 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  role: {
+    type: DataTypes.ENUM("ADMIN", "USER"),
+    allowNull: false,
+    defaultValue: "USER",
+  },
   createdAt: {
     type: DataTypes.DATE,
+    allowNull: false,
     defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
   },
   updatedAt: {
     type: DataTypes.DATE,
+    allowNull: false,
     defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
     onUpdate: sequelize.literal("CURRENT_TIMESTAMP"),
   },

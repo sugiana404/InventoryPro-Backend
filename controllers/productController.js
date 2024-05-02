@@ -1,10 +1,19 @@
 const productService = require("../services/productService");
 
 async function createProduct(req, res) {
-  console.log(req.body);
-  const { name, stock, price, sold, supplier } = req.body;
+  const { name, stock, price, sold, supplier, supplierId } = req.body;
+  const token = req.headers.authorization;
+  console.log("token:", token);
   try {
-    await productService.createProduct(name, stock, price, sold, supplier);
+    await productService.createProduct(
+      name,
+      stock,
+      price,
+      sold,
+      supplier,
+      supplierId,
+      token
+    );
     res.status(201).json({ message: "Product added" });
   } catch (error) {
     res.status(500).json({ error: error.message });

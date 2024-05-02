@@ -7,6 +7,7 @@ const sequelize = require("./db/sequelize");
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 
 // Initialize server
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/transaction", transactionRoutes);
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);

@@ -25,6 +25,7 @@ async function login(email, password) {
       {
         id: user.id,
         email: user.email,
+        role: user.role,
       },
       jwtConfig.secretKey,
       {

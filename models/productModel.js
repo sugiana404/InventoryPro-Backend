@@ -4,11 +4,6 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../db/sequelize");
 
 const Product = sequelize.define("Product", {
-  productId: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -25,8 +20,8 @@ const Product = sequelize.define("Product", {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  supplier: {
-    type: DataTypes.STRING,
+  supplierId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   lastUpdate: {
