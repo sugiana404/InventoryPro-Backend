@@ -18,16 +18,19 @@ async function signup(req, res) {
   }
 }
 
-async function login(req, res) {
+async function login(req, res, next) {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required." });
-  }
+
   try {
+    if (!email || !password) {
+      throw new Error("Email and password are required.");
+    }
+
     const { token } = await authService.login(email, password);
+
     res.status(200).json({ message: "Login success", token });
   } catch (error) {
-    return res.status(401).json({ error: error.message });
+    next(error);
   }
 }
 

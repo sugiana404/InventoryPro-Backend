@@ -1,6 +1,7 @@
 // Global Import
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { createError } = require("http-errors");
 
 // Local Import
 const User = require("../models/userModel");
@@ -11,15 +12,15 @@ async function createUser(firstName, lastName, email, password) {
   return User.create({ firstName, lastName, email, password: hashedPassword });
 }
 
-async function login(email, password) {
+async function login(email, password, next) {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new Error("Invalid credential");
+      throw createError(401, "Email or password are invalid");
     }
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw new Error("Invalid credential");
+      throw createError(401, "Email or password are invalid");
     }
     const token = jwt.sign(
       {
@@ -34,7 +35,7 @@ async function login(email, password) {
     );
     return { token };
   } catch (error) {
-    throw new Error(error.message);
+    return next(error);
   }
 }
 
