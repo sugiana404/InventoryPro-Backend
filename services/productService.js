@@ -19,7 +19,7 @@ async function createProduct(
   const decodedToken = jwt.verify(token, jwtConfig.secretKey);
   const userRole = decodedToken.role;
   try {
-    if (userRole === "ADMIN") {
+    if (userRole === "USER") {
       return Product.create({
         name,
         stock,

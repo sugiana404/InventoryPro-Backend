@@ -1,14 +1,14 @@
 const transactionService = require("../services/transactionService");
+const { sendSuccessResponse } = require("../utils/responseUtils");
 
-async function createTransaction(req, res) {
+async function createTransaction(req, res, next) {
   const { date, items } = req.body;
   console.log(req.body);
   try {
     const result = await transactionService.createTransaction(date, items);
-    res.status(201).json({ message: "Transaction added", data: result });
+    sendSuccessResponse(res, 201, result, "Data created successfully");
   } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 }
 

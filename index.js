@@ -26,13 +26,16 @@ async function initializeDatabase() {
 }
 initializeDatabase();
 
+// Middleware
 app.use(express.json());
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/transaction", transactionRoutes);
 app.use("/api/report", reportRoutes);
 
+// Error handling middleware
 app.use(errorHandler);
 
 app.listen(port, () => {

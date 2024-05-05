@@ -5,7 +5,7 @@ const router = express.Router();
 // Local Import
 const authController = require("../controllers/authController");
 
-router.post("/signup", authController.signup);
-router.post("/login", authController.login);
+router.post("/sign_up", authController.signUp);
+router.post("/sign_in", authController.signIn);
 
 module.exports = router;
