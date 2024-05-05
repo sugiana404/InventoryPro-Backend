@@ -18,12 +18,13 @@ const port = process.env.PORT || 3000;
 // Initialize DB
 async function initializeDatabase() {
   try {
-    await sequelize.sync({ alter: false });
+    await sequelize.sync({ alter: true });
     console.log("Database synchronized successfully");
   } catch (error) {
     console.error("Error synchronizing database:", error);
   }
 }
+
 initializeDatabase();
 
 // Middleware

@@ -1,54 +1,64 @@
 const productService = require("../services/productService");
+const { sendSuccessResponse } = require("../utils/responseUtils");
 
-async function createProduct(req, res) {
-  const { name, stock, price, sold, supplier, supplierId } = req.body;
-  const token = req.headers.authorization;
-  console.log("token:", token);
+async function createProduct(req, res, next) {
   try {
-    await productService.createProduct(
-      name,
-      stock,
-      price,
-      sold,
-      supplier,
-      supplierId,
-      token
-    );
-    res.status(201).json({ message: "Product added" });
+    const product = await productService.createProduct(req);
+    sendSuccessResponse(res, 201, product, "Product added successfully");
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+async function updateProduct(req, res, next) {
+  try {
+    const productId = req.params.id;
+    const updateFields = req.body;
+    const productUpdate = await productService.updateProduct(
+      productId,
+      updateFields
+    );
+    sendSuccessResponse(
+      res,
+      200,
+      productUpdate,
+      "Product updated successfully"
+    );
+  } catch (error) {
+    next(error);
   }
 }
 
 async function getAllProduct(req, res) {
   try {
     const product = await productService.getProduct();
-    res.status(200).json(product);
+    sendSuccessResponse(res, 200, product, "Get data successfully");
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 }
 
 async function getLowStockProduct(req, res) {
   try {
     const lowStockProduct = await productService.getLowStockProduct();
-    res.status(200).json(lowStockProduct);
+    sendSuccessResponse(res, 200, lowStockProduct, "Get data successfully");
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 }
 
 async function getBestSellerProduct(req, res) {
   try {
     const bestSellerProduct = await productService.getBestSellerProduct();
-    res.status(200).json(bestSellerProduct);
+    sendSuccessResponse(res, 200, bestSellerProduct, "Get data successfully");
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 }
 
 module.exports = {
   createProduct,
+  updateProduct,
   getAllProduct,
   getLowStockProduct,
   getBestSellerProduct,

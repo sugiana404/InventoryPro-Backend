@@ -13,6 +13,5 @@ This is a personal project to learn develop a backend architecture using Express
 
 ## Note
 
-- The error middleware still bug
-- Need apply error middlware to every service
-- Need to create currentUser middleware
+- Need to implement user roles and permissions [admin, staff]
+- Add audit trail to track changes made to inventory, products, order

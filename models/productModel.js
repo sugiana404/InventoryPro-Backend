@@ -31,4 +31,8 @@ const Product = sequelize.define("Product", {
   },
 });
 
+Product.beforeUpdate((product, options) => {
+  product.lastUpdate = new Date();
+});
+
 module.exports = Product;

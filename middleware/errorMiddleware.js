@@ -1,8 +1,8 @@
 const {
   NotFoundError,
   IncorrectPasswordError,
-  DataAlreadyExistsError,
   AddDataError,
+  UnauthorizedError,
 } = require("../utils/errorUtils");
 
 const errorHandler = (err, req, res, next) => {
@@ -17,7 +17,9 @@ const errorHandler = (err, req, res, next) => {
       },
     };
     return res.status(404).json(errorResponse);
-  } else if (err instanceof IncorrectPasswordError) {
+  }
+
+  if (err instanceof IncorrectPasswordError) {
     const errorResponse = {
       error: {
         code: "INCORRECT_PASSWORD_ERROR",
@@ -26,7 +28,20 @@ const errorHandler = (err, req, res, next) => {
       },
     };
     return res.status(401).json(errorResponse);
-  } else if (err instanceof AddDataError) {
+  }
+
+  if (err instanceof UnauthorizedError) {
+    const errorResponse = {
+      error: {
+        code: "UNAUTHORIZED_ERROR",
+        message: err.message,
+        details: "There is issue with the authorization.",
+      },
+    };
+    return res.status(401).json(errorResponse);
+  }
+
+  if (err instanceof AddDataError) {
     const errorResponse = {
       error: {
         code: "ADD_DATA_ERROR",

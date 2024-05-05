@@ -47,17 +47,15 @@ async function signIn(email, password) {
       throw new IncorrectPasswordError("Incorrect password");
     }
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-      jwtConfig.secretKey,
-      {
-        expiresIn: jwtConfig.expiresIn,
-      }
-    );
+    const payload = {
+      id: user.id,
+      email: user.email,
+    };
+
+    const token = jwt.sign(payload, jwtConfig.secretKey, {
+      expiresIn: jwtConfig.expiresIn,
+    });
+
     const expired = new Date();
     expired.setHours(expired.getHours() + 1);
 
