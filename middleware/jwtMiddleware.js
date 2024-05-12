@@ -14,7 +14,7 @@ function authenticateToken(req, res, next) {
 
   jwt.verify(token, jwtConfig.secretKey, (err, decoded) => {
     if (err) {
-      throw new UnauthorizedError("Invalid token.");
+      throw new UnauthorizedError("Token is expired or invalid.");
     }
     req.user = decoded;
     next();

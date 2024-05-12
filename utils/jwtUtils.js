@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwtConfig");
 
-async function tokenDecode(req) {
+async function findUserId(req) {
   const token = req.headers["authorization"];
   const decodedToken = jwt.verify(token, jwtConfig.secretKey);
-  return decodedToken;
+  const userId = decodedToken.id;
+  return userId;
 }
 
-module.exports = { tokenDecode };
+module.exports = { findUserId };

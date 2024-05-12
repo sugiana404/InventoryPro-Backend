@@ -1,4 +1,5 @@
 const reportService = require("../services/reportService");
+const { sendSuccessResponse } = require("../utils/responseUtils");
 
 async function generateFinancialReport(req, res) {
   const { year, month } = req.query;
@@ -12,8 +13,7 @@ async function generateFinancialReport(req, res) {
       Number(year),
       Number(month)
     );
-
-    res.json(totalMonthlyRevenue);
+    sendSuccessResponse(res, 200, totalMonthlyRevenue, "Get data successfully");
   } catch (error) {
     res.status(500).json({ error: error });
   }

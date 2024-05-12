@@ -24,6 +24,11 @@ router.get(
   productController.getLowStockProduct
 );
 router.get(
+  "/count_low_stock",
+  authenticateToken.authenticateToken,
+  productController.countLowStockProduct
+);
+router.get(
   "/get_best_seller",
   authenticateToken.authenticateToken,
   productController.getBestSellerProduct

@@ -16,7 +16,8 @@ async function updateProduct(req, res, next) {
     const updateFields = req.body;
     const productUpdate = await productService.updateProduct(
       productId,
-      updateFields
+      updateFields,
+      req
     );
     sendSuccessResponse(
       res,
@@ -29,7 +30,7 @@ async function updateProduct(req, res, next) {
   }
 }
 
-async function getAllProduct(req, res) {
+async function getAllProduct(req, res, next) {
   try {
     const product = await productService.getProduct();
     sendSuccessResponse(res, 200, product, "Get data successfully");
@@ -38,7 +39,7 @@ async function getAllProduct(req, res) {
   }
 }
 
-async function getLowStockProduct(req, res) {
+async function getLowStockProduct(req, res, next) {
   try {
     const lowStockProduct = await productService.getLowStockProduct();
     sendSuccessResponse(res, 200, lowStockProduct, "Get data successfully");
@@ -47,7 +48,16 @@ async function getLowStockProduct(req, res) {
   }
 }
 
-async function getBestSellerProduct(req, res) {
+async function countLowStockProduct(req, res, next) {
+  try {
+    const product = await productService.countLowStockProduct();
+    sendSuccessResponse(res, 200, product, "Get data successfully");
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getBestSellerProduct(req, res, next) {
   try {
     const bestSellerProduct = await productService.getBestSellerProduct();
     sendSuccessResponse(res, 200, bestSellerProduct, "Get data successfully");
@@ -61,5 +71,6 @@ module.exports = {
   updateProduct,
   getAllProduct,
   getLowStockProduct,
+  countLowStockProduct,
   getBestSellerProduct,
 };

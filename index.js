@@ -25,8 +25,6 @@ async function initializeDatabase() {
   }
 }
 
-initializeDatabase();
-
 // Middleware
 app.use(express.json());
 
@@ -39,6 +37,10 @@ app.use("/api/report", reportRoutes);
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`server is running on port ${port}`);
-});
+function startServer() {
+  app.listen(port, () => {
+    console.log(`server is running on port ${port}`);
+  });
+}
+
+initializeDatabase().then(startServer).catch(console.error);
