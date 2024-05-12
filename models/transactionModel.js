@@ -8,9 +8,9 @@ const Transaction = sequelize.define("Transaction", {
     defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
   },
   status: {
-    type: DataTypes.ENUM("ON_PROCESS", "DELIVERED"),
+    type: DataTypes.ENUM("PENDING", "ON_PROCESS", "DELIVERED", "FINISHED"),
     allowNull: false,
-    defaultValue: "ON_PROCESS",
+    defaultValue: "PENDING",
   },
 });
 

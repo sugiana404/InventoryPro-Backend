@@ -1,37 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const authenticateToken = require("../middleware/jwtMiddleware");
 
 const productController = require("../controllers/productController");
-router.post(
-  "/create_product",
-  authenticateToken.authenticateToken,
-  productController.createProduct
-);
-router.put(
-  "/update_product/:id",
-  authenticateToken.authenticateToken,
-  productController.updateProduct
-);
-router.get(
-  "/get_product",
-  authenticateToken.authenticateToken,
-  productController.getAllProduct
-);
-router.get(
-  "/get_low_stock",
-  authenticateToken.authenticateToken,
-  productController.getLowStockProduct
-);
-router.get(
-  "/count_low_stock",
-  authenticateToken.authenticateToken,
-  productController.countLowStockProduct
-);
-router.get(
-  "/get_best_seller",
-  authenticateToken.authenticateToken,
-  productController.getBestSellerProduct
-);
+router.post("/create_product", productController.createProduct);
+router.put("/update_product/:id", productController.updateProduct);
+router.get("/get_product", productController.getAllProduct);
+router.get("/get_low_stock", productController.getLowStockProduct);
+router.get("/get_best_seller", productController.getBestSellerProduct);
 
 module.exports = router;

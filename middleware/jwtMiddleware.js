@@ -1,3 +1,5 @@
+// This code will be not used because the project will store the token in cookies instead of store it in local.
+
 // Global Import
 const jwt = require("jsonwebtoken");
 

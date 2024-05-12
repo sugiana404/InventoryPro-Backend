@@ -2,7 +2,8 @@ const {
   NotFoundError,
   IncorrectPasswordError,
   AddDataError,
-  UnauthorizedError,
+  UserNotSignInError,
+  UnauthroizedError,
 } = require("../utils/errorUtils");
 
 const errorHandler = (err, req, res, next) => {
@@ -30,17 +31,6 @@ const errorHandler = (err, req, res, next) => {
     return res.status(401).json(errorResponse);
   }
 
-  if (err instanceof UnauthorizedError) {
-    const errorResponse = {
-      error: {
-        code: "UNAUTHORIZED_ERROR",
-        message: err.message,
-        details: "There is issue with the authorization.",
-      },
-    };
-    return res.status(401).json(errorResponse);
-  }
-
   if (err instanceof AddDataError) {
     const errorResponse = {
       error: {
@@ -52,11 +42,33 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json(errorResponse);
   }
 
+  if (err instanceof UserNotSignInError) {
+    const errorResponse = {
+      error: {
+        code: "USER_NOT_SIGN_IN",
+        message: err.message,
+        details: "Failed to signout because there is no user login.",
+      },
+    };
+    return res.status(401).json(errorResponse);
+  }
+
+  if (err instanceof UnauthroizedError) {
+    const errorResponse = {
+      error: {
+        code: "UNAUTHORIZED_REQUEST",
+        message: err.message,
+        details: "Request failed because request is unauthorized.",
+      },
+    };
+    return res.status(401).json(errorResponse);
+  }
+
   const genericErrorResponse = {
     error: {
       code: "INTERNAL_SERVER_ERROR",
       message: "Internal server error.",
-      details: "AN unexpected error occured. Please try again later.",
+      details: "An unexpected error occured. Please try again later.",
     },
   };
 

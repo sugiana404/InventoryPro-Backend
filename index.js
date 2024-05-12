@@ -10,6 +10,8 @@ const productRoutes = require("./routes/productRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
+const cookieParser = require("cookie-parser");
+const cookieCheckMiddleware = require("./middleware/cookieCheckMiddleware");
 
 // Initialize server
 const app = express();
@@ -18,7 +20,7 @@ const port = process.env.PORT || 3000;
 // Initialize DB
 async function initializeDatabase() {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false });
     console.log("Database synchronized successfully");
   } catch (error) {
     console.error("Error synchronizing database:", error);
@@ -27,6 +29,14 @@ async function initializeDatabase() {
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
+app.use(cookieCheckMiddleware);
+app.use((req, res, next) => {
+  if (req.cookies && req.cookies.accessToken) {
+    req.headers.authorization = `Bearer ${req.cookies.accessToken}`;
+  }
+  next();
+});
 
 // Routes
 app.use("/api/auth", authRoutes);

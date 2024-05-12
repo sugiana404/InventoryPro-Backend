@@ -1,3 +1,5 @@
+const { QueryTypes } = require("sequelize");
+const sequelize = require("../db/sequelize");
 const Product = require("../models/productModel");
 const { TransactionItem } = require("../models/transactionItemModel");
 const Transaction = require("../models/transactionModel");
@@ -32,6 +34,33 @@ async function createTransaction(date, items) {
   }
 }
 
+async function getTransactionData(req) {
+  let transactionData;
+  try {
+    const { status } = req.query;
+    if (status) {
+      transactionData = await sequelize.query(
+        "SELECT ti.id AS item_id, ti.quantity, ti.price, ti.TransactionId, ti.ProductId, t.id AS transaction_id, t.date, t.status FROM transactionitems as ti INNER JOIN transactions AS t ON ti.TransactionId = t.id WHERE t.status = :status; ",
+        {
+          type: QueryTypes.SELECT,
+          replacements: { status: status },
+        }
+      );
+    } else {
+      transactionData = await sequelize.query(
+        "SELECT ti.id AS item_id, ti.quantity, ti.price, ti.TransactionId, ti.ProductId, t.id AS transaction_id, t.date, t.status FROM transactionitems as ti INNER JOIN transactions AS t ON ti.TransactionId = t.id",
+        {
+          type: QueryTypes.SELECT,
+        }
+      );
+    }
+    const dataLength = transactionData.length;
+    return { status, dataLength, transactionData };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 async function checkProduct(items) {
   try {
     for (const item of items) {
@@ -56,4 +85,4 @@ async function checkProduct(items) {
   }
 }
 
-module.exports = { createTransaction };
+module.exports = { createTransaction, getTransactionData };

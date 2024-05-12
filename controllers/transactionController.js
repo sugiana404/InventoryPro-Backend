@@ -12,4 +12,13 @@ async function createTransaction(req, res, next) {
   }
 }
 
-module.exports = { createTransaction };
+async function getTransactionData(req, res, next) {
+  try {
+    const data = await transactionService.getTransactionData(req);
+    sendSuccessResponse(res, 200, data, "Get data succesfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { createTransaction, getTransactionData };

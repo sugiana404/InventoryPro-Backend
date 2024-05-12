@@ -35,7 +35,7 @@ async function signUp(firstName, lastName, email, password) {
   }
 }
 
-async function signIn(email, password) {
+async function signIn(email, password, res) {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -58,7 +58,11 @@ async function signIn(email, password) {
 
     const expired = new Date();
     expired.setHours(expired.getHours() + 1);
-
+    res.cookie("accessToken", token, {
+      maxAge: 3600000,
+      httpOnly: true,
+      secure: true,
+    });
     return {
       token: token,
       expired: expired,
@@ -68,4 +72,16 @@ async function signIn(email, password) {
   }
 }
 
-module.exports = { signUp, signIn };
+async function signOut(res) {
+  try {
+    res.cookie("accessToken", "", {
+      expires: new Date(0),
+      httpOnly: true,
+      secure: true,
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = { signUp, signIn, signOut };
