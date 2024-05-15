@@ -3,10 +3,19 @@ const sequelize = require("../db/sequelize");
 const Product = require("../models/productModel");
 const { TransactionItem } = require("../models/transactionItemModel");
 const Transaction = require("../models/transactionModel");
-const { NotFoundError, AddDataError } = require("../utils/errorUtils");
+const {
+  NotFoundError,
+  AddDataError,
+  EnumViolationError,
+} = require("../utils/errorUtils");
+const { createAudit } = require("../utils/auditUtils");
+const { findUserId } = require("../utils/jwtUtils");
+const AuditLog = require("../models/auditModel");
 
-async function createTransaction(date, items) {
+async function createTransaction(date, items, req) {
   try {
+    const jwtToken = req.cookies.accessToken;
+    const userId = await findUserId(jwtToken);
     await checkProduct(items);
 
     const transaction = await Transaction.create({ date });
@@ -27,6 +36,8 @@ async function createTransaction(date, items) {
         return transactionItem;
       })
     );
+
+    await createAudit("CREATE", "TRANSACTION", userId, transaction.id, "");
 
     return { transaction, items: createdItems };
   } catch (error) {
@@ -60,7 +71,41 @@ async function getTransactionData(req) {
     throw new Error(error.message);
   }
 }
+async function updateTransactionStatus(req) {
+  const { transactionId, status } = req.body;
 
+  if (!["PENDING", "ON_PROCESS", "DELIVERED", "FINISHED"].includes(status)) {
+    throw new EnumViolationError(`Status is not in ENUM type data.`);
+  }
+
+  const jwtToken = req.cookies.accessToken;
+  const userId = await findUserId(jwtToken);
+
+  try {
+    const transaction = await Transaction.findByPk(transactionId);
+    if (!transaction) {
+      throw new NotFoundError(
+        `Transaction with ID ${transactionId} is not found`
+      );
+    }
+    const transactionUpdate = await transaction.update({
+      status: status,
+      UserId: userId,
+    });
+    console.log(`transactionUpdate : ${JSON.stringify(transactionUpdate)}`);
+    await createAudit(
+      "UPDATE",
+      "TRANSACTION",
+      userId,
+      transactionId,
+      `${JSON.stringify(transactionUpdate)}`
+    );
+    return transactionUpdate;
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+}
 async function checkProduct(items) {
   try {
     for (const item of items) {
@@ -85,4 +130,8 @@ async function checkProduct(items) {
   }
 }
 
-module.exports = { createTransaction, getTransactionData };
+module.exports = {
+  createTransaction,
+  getTransactionData,
+  updateTransactionStatus,
+};

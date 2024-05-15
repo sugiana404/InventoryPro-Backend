@@ -38,7 +38,21 @@ async function updateProduct(req, res, next) {
   }
 }
 
+async function findProduct(req, res, next) {
+  try {
+    if (!req.user) {
+      throw new UnauthroizedError("Failed to find product.");
+    }
+    const searchKey = req.query.searchKey;
+    const product = await productService.findProduct(searchKey);
+    sendSuccessResponse(res, 200, product, "Get data succesfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function getAllProduct(req, res, next) {
+  console.log(`user: ${req.user}`);
   try {
     if (!req.user) {
       throw new UnauthroizedError("Failed to get data.");
@@ -80,4 +94,5 @@ module.exports = {
   getAllProduct,
   getLowStockProduct,
   getBestSellerProduct,
+  findProduct,
 };

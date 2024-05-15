@@ -79,6 +79,7 @@ async function signOut(res) {
       httpOnly: true,
       secure: true,
     });
+    console.log("success");
   } catch (error) {
     throw error;
   }

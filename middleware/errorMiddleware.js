@@ -4,6 +4,7 @@ const {
   AddDataError,
   UserNotSignInError,
   UnauthroizedError,
+  EnumViolationError,
 } = require("../utils/errorUtils");
 
 const errorHandler = (err, req, res, next) => {
@@ -47,7 +48,7 @@ const errorHandler = (err, req, res, next) => {
       error: {
         code: "USER_NOT_SIGN_IN",
         message: err.message,
-        details: "Failed to signout because there is no user login.",
+        details: "Failed to process request because there is no user login.",
       },
     };
     return res.status(401).json(errorResponse);
@@ -62,6 +63,18 @@ const errorHandler = (err, req, res, next) => {
       },
     };
     return res.status(401).json(errorResponse);
+  }
+
+  if (err instanceof EnumViolationError) {
+    const errorResponse = {
+      error: {
+        code: "ENUM_VIOLATION",
+        message: err.message,
+        details:
+          "The input is not valid because the input is not accoding to database enum type data.",
+      },
+    };
+    return res.status(400).json(errorResponse);
   }
 
   const genericErrorResponse = {

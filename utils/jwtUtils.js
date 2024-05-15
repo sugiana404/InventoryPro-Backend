@@ -6,8 +6,11 @@ async function findUserId(token) {
     throw new Error("Cookies don't have token");
   }
   try {
+    console.log(`token : ${token}`);
     const decodedToken = jwt.verify(token, jwtConfig.secretKey);
+    console.log(`decodedToken: ${decodedToken}`);
     const userId = decodedToken.id;
+    console.log(`userId: ${userId}`);
     return userId;
   } catch (error) {
     throw error;

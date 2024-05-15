@@ -46,6 +46,14 @@ class PageNotFoundError extends Error {
   }
 }
 
+class EnumViolationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "EnumViolationError";
+    this.statusCode = 400;
+  }
+}
+
 module.exports = {
   NotFoundError,
   IncorrectPasswordError,
@@ -53,4 +61,5 @@ module.exports = {
   UserNotSignInError,
   UnauthroizedError,
   PageNotFoundError,
+  EnumViolationError,
 };

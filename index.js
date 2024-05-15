@@ -31,14 +31,8 @@ async function initializeDatabase() {
 app.use(express.json());
 app.use(cookieParser());
 app.use(cookieCheckMiddleware);
-app.use((req, res, next) => {
-  if (req.cookies && req.cookies.accessToken) {
-    req.headers.authorization = `Bearer ${req.cookies.accessToken}`;
-  }
-  next();
-});
 
-// Routes
+// Routes required authentication
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/transaction", transactionRoutes);

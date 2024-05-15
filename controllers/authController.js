@@ -28,6 +28,7 @@ async function signIn(req, res, next) {
 
 async function signOut(req, res, next) {
   try {
+    console.log(`User: ${req.user}`);
     if (!req.user) {
       throw new UserNotSignInError(`Failed to signout`);
     }

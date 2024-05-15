@@ -1,5 +1,5 @@
 // Global Import
-const { QueryTypes } = require("sequelize");
+const { QueryTypes, Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 
 // Local Import
@@ -40,7 +40,8 @@ async function createProduct(req) {
 
 async function updateProduct(productId, updateFields, req) {
   try {
-    const userId = await findUserId(req);
+    const jwtToken = req.cookies.accessToken;
+    const userId = await findUserId(jwtToken);
     const product = await Product.findByPk(productId);
     if (!product) {
       throw new NotFoundError(`Product with ID ${productId} is not found`);
@@ -57,7 +58,8 @@ async function updateProduct(productId, updateFields, req) {
       "UPDATE",
       "PRODUCT",
       userId,
-      `UPDATE: [{product Id: ${productId}}, update: [${changes}]]`
+      productId,
+      `${JSON.stringify(changes)}`
     );
     return productUpdate;
   } catch (error) {
@@ -71,6 +73,23 @@ async function getProduct() {
   } catch (error) {
     throw new Error(error.message);
   }
+}
+
+async function findProduct(searchKey) {
+  let product;
+  if (/^\d+$/.test(searchKey)) {
+    product = await Product.findByPk(searchKey);
+  } else {
+    product = await Product.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.like]: `%${searchKey}%` } },
+          { category: { [Op.like]: `%${searchKey}%` } },
+        ],
+      },
+    });
+  }
+  return product;
 }
 
 async function getLowStockProduct() {
@@ -108,4 +127,5 @@ module.exports = {
   getProduct,
   getLowStockProduct,
   getBestSellerProduct,
+  findProduct,
 };

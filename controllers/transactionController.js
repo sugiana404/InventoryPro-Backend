@@ -1,11 +1,15 @@
 const transactionService = require("../services/transactionService");
+const { UnauthroizedError } = require("../utils/errorUtils");
 const { sendSuccessResponse } = require("../utils/responseUtils");
 
 async function createTransaction(req, res, next) {
   const { date, items } = req.body;
   console.log(req.body);
   try {
-    const result = await transactionService.createTransaction(date, items);
+    if (!req.user) {
+      throw new UnauthroizedError("Failed to create transaction");
+    }
+    const result = await transactionService.createTransaction(date, items, req);
     sendSuccessResponse(res, 201, result, "Data created successfully");
   } catch (error) {
     next(error);
@@ -14,6 +18,9 @@ async function createTransaction(req, res, next) {
 
 async function getTransactionData(req, res, next) {
   try {
+    if (!req.user) {
+      throw new UnauthroizedError("Failed to get transaction data.");
+    }
     const data = await transactionService.getTransactionData(req);
     sendSuccessResponse(res, 200, data, "Get data succesfully.");
   } catch (error) {
@@ -21,4 +28,16 @@ async function getTransactionData(req, res, next) {
   }
 }
 
-module.exports = { createTransaction, getTransactionData };
+async function updateTransaction(req, res, next) {
+  try {
+    if (!req.user) {
+      throw new UnauthroizedError("Failed to update transaction data.");
+    }
+    const data = await transactionService.updateTransactionStatus(req);
+    sendSuccessResponse(res, 200, data, "Update data successfully.");
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { createTransaction, getTransactionData, updateTransaction };
