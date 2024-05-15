@@ -4,10 +4,7 @@ const { UserNotSignInError } = require("../utils/errorUtils");
 
 function cookieCheckMiddleware(req, res, next) {
   const token = req.cookies["accessToken"];
-  console.log(`token: ${token}`);
-  // if (!token) {
-  //   throw new UserNotSignInError("Token is invalid or expired.");
-  // }
+
   if (token) {
     try {
       const decodedToken = jwt.verify(token, jwtConfig.secretKey);

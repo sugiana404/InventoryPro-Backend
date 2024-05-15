@@ -3,8 +3,9 @@ const { TransactionItem } = require("../models/transactionItemModel");
 const Product = require("../models/productModel");
 const Transaction = require("../models/transactionModel");
 const sequelize = require("../db/sequelize");
+const { UnauthorizedError } = require("express-jwt");
 
-async function getRevenueInfo(year, month) {
+async function getRevenueInfo(year, month, req) {
   try {
     const startDate = `${year}-${month
       .toString()
@@ -37,7 +38,7 @@ async function getRevenueInfo(year, month) {
 
     return { totalMonthlyRevenue, productInfo };
   } catch (error) {
-    throw new Error("Error finding all transactions");
+    throw error;
   }
 }
 

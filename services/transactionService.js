@@ -10,16 +10,16 @@ const {
 } = require("../utils/errorUtils");
 const { createAudit } = require("../utils/auditUtils");
 const { findUserId } = require("../utils/jwtUtils");
-const AuditLog = require("../models/auditModel");
 
-async function createTransaction(date, items, req) {
+async function createTransaction(date, items, token) {
+  const userId = await findUserId(token);
   try {
-    const jwtToken = req.cookies.accessToken;
-    const userId = await findUserId(jwtToken);
+    // check product status
     await checkProduct(items);
 
     const transaction = await Transaction.create({ date });
 
+    // get all item on the transaction
     const createdItems = await Promise.all(
       items.map(async (item) => {
         const { productId, quantity, price } = item;
@@ -37,7 +37,8 @@ async function createTransaction(date, items, req) {
       })
     );
 
-    await createAudit("CREATE", "TRANSACTION", userId, transaction.id, "");
+    // Log to audit
+    await createAudit("CREATE", "TRANSACTION", userId, { id: transaction.id });
 
     return { transaction, items: createdItems };
   } catch (error) {
@@ -45,10 +46,10 @@ async function createTransaction(date, items, req) {
   }
 }
 
-async function getTransactionData(req) {
+async function getTransactionData(status) {
   let transactionData;
   try {
-    const { status } = req.query;
+    // Check if there is status in query
     if (status) {
       transactionData = await sequelize.query(
         "SELECT ti.id AS item_id, ti.quantity, ti.price, ti.TransactionId, ti.ProductId, t.id AS transaction_id, t.date, t.status FROM transactionitems as ti INNER JOIN transactions AS t ON ti.TransactionId = t.id WHERE t.status = :status; ",
@@ -65,21 +66,21 @@ async function getTransactionData(req) {
         }
       );
     }
+
     const dataLength = transactionData.length;
+
     return { status, dataLength, transactionData };
   } catch (error) {
     throw new Error(error.message);
   }
 }
-async function updateTransactionStatus(req) {
-  const { transactionId, status } = req.body;
 
+async function updateTransactionStatus(transactionId, status, token) {
+  const userId = await findUserId(token);
+  // status ENUM validation
   if (!["PENDING", "ON_PROCESS", "DELIVERED", "FINISHED"].includes(status)) {
     throw new EnumViolationError(`Status is not in ENUM type data.`);
   }
-
-  const jwtToken = req.cookies.accessToken;
-  const userId = await findUserId(jwtToken);
 
   try {
     const transaction = await Transaction.findByPk(transactionId);
@@ -92,20 +93,20 @@ async function updateTransactionStatus(req) {
       status: status,
       UserId: userId,
     });
-    console.log(`transactionUpdate : ${JSON.stringify(transactionUpdate)}`);
-    await createAudit(
-      "UPDATE",
-      "TRANSACTION",
-      userId,
-      transactionId,
-      `${JSON.stringify(transactionUpdate)}`
-    );
+
+    // Log to audit
+    await createAudit("UPDATE", "TRANSACTION", userId, {
+      id: transactionId,
+      status: status,
+    });
+
     return transactionUpdate;
   } catch (error) {
     console.log(error.message);
     throw error;
   }
 }
+
 async function checkProduct(items) {
   try {
     for (const item of items) {
