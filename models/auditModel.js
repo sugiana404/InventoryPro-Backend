@@ -8,7 +8,7 @@ const AuditLog = sequelize.define("Audit", {
     allowNull: false,
   },
   entityType: {
-    type: DataTypes.ENUM("PRODUCT", "TRANSACTION"),
+    type: DataTypes.ENUM("PRODUCT", "TRANSACTION", "CUSTOMER", "SUPPLIER"),
     allowNull: false,
   },
   userId: {

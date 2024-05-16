@@ -3,7 +3,7 @@ const { UnauthroizedError } = require("../utils/errorUtils");
 const { sendSuccessResponse } = require("../utils/responseUtils");
 
 async function createTransaction(req, res, next) {
-  const { date, items } = req.body;
+  const { date, customerId, items } = req.body;
   const token = req.cookies.accessToken;
 
   try {
@@ -14,6 +14,7 @@ async function createTransaction(req, res, next) {
     const result = await transactionService.createTransaction(
       date,
       items,
+      customerId,
       token
     );
 
@@ -31,7 +32,7 @@ async function getTransactionData(req, res, next) {
     if (!req.user) {
       throw new UnauthroizedError("Failed to get transaction data.");
     }
-    const data = await transactionService.getTransactionData(status, token);
+    const data = await transactionService.getTransactionData(status);
     sendSuccessResponse(res, 200, data, "Get data succesfully.");
   } catch (error) {
     next(error);
@@ -39,7 +40,8 @@ async function getTransactionData(req, res, next) {
 }
 
 async function updateTransaction(req, res, next) {
-  const { transactionId, status } = req.body;
+  const transactionId = req.params.id;
+  const { status } = req.body;
   const token = req.cookies.accessToken;
   try {
     if (!req.user) {

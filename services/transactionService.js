@@ -11,13 +11,13 @@ const {
 const { createAudit } = require("../utils/auditUtils");
 const { findUserId } = require("../utils/jwtUtils");
 
-async function createTransaction(date, items, token) {
+async function createTransaction(date, items, customerId, token) {
   const userId = await findUserId(token);
   try {
     // check product status
     await checkProduct(items);
 
-    const transaction = await Transaction.create({ date });
+    const transaction = await Transaction.create({ date, customerId });
 
     // get all item on the transaction
     const createdItems = await Promise.all(

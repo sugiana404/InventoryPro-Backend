@@ -1,18 +1,12 @@
-const { Op, Sequelize } = require("sequelize");
-const { TransactionItem } = require("../models/transactionItemModel");
-const Product = require("../models/productModel");
-const Transaction = require("../models/transactionModel");
 const sequelize = require("../db/sequelize");
-const { UnauthorizedError } = require("express-jwt");
 
-async function getRevenueInfo(year, month, req) {
+async function getRevenueInfo(year, month) {
   try {
+    // Get first date and last date of month
     const startDate = `${year}-${month
       .toString()
       .padStart(2, "0")}-01 00:00:00`;
     const endDate = await getLastDayOfMonth(year, month);
-
-    console.log(`startDate : ${startDate}, endDate: ${endDate}`);
 
     const query = `SELECT p.name AS productName, CAST(SUM(ti.quantity * ti.price) AS UNSIGNED) AS totalIncome 
     FROM transactionitems ti
@@ -27,14 +21,12 @@ async function getRevenueInfo(year, month, req) {
       type: sequelize.QueryTypes.SELECT,
     });
 
-    console.log(`productInfo: ${productInfo}`);
-
     let totalMonthlyRevenue = 0;
+
+    // Count total monthly revenue
     productInfo.forEach((product) => {
       totalMonthlyRevenue += Number(product.totalIncome);
     });
-
-    console.log(`totalMonthlyRevenue: ${totalMonthlyRevenue}`);
 
     return { totalMonthlyRevenue, productInfo };
   } catch (error) {

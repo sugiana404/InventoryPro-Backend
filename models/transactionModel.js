@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/sequelize");
 const User = require("./userModel");
-const Customer = require("./customer");
+const Customer = require("./customerModel");
 
 const Transaction = sequelize.define("Transaction", {
   date: {
