@@ -5,7 +5,6 @@ const { findUserId } = require("../utils/jwtUtils");
 
 async function addCustomer(name, address, email, token) {
   const userId = await findUserId(token);
-  console.log(`userId: ${userId}`);
   try {
     const customer = await Customer.create({
       name,

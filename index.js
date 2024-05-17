@@ -11,6 +11,7 @@ const transactionRoutes = require("./routes/transactionRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const supplierRoutes = require("./routes/supplierRoutes");
+const reSupplyRoutes = require("./routes/reSupplyRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 const cookieParser = require("cookie-parser");
 const cookieCheckMiddleware = require("./middleware/cookieCheckMiddleware");
@@ -22,7 +23,7 @@ const port = process.env.PORT || 3000;
 // Initialize DB
 async function initializeDatabase() {
   try {
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log("Database synchronized successfully");
   } catch (error) {
     console.error("Error synchronizing database:", error);
@@ -41,6 +42,7 @@ app.use("/api/transaction", transactionRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/customer", customerRoutes);
 app.use("/api/supplier", supplierRoutes);
+app.use("/api/resupply", reSupplyRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
