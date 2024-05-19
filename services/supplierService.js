@@ -12,12 +12,16 @@ async function addSupplier(name, address, email, phoneNumber, token) {
       email,
       phoneNumber,
     });
-    await createAudit(
-      "CREATE",
-      "SUPPLIER",
-      userId,
-      `${JSON.stringify(supplier)}`
-    );
+    const added = {
+      name,
+      address,
+      email,
+      phoneNumber,
+    };
+    await createAudit("CREATE", "SUPPLIER", supplier.id, userId, {
+      id: supplier.id,
+      added: [added],
+    });
   } catch (error) {
     throw error;
   }
@@ -52,18 +56,16 @@ async function updateSupplierData(supplierId, updateFields, token) {
       throw new NotFoundError(`Supplier with ID ${supplierId} is not found.`);
     }
     const supplierUpdate = await supplier.update(updateFields);
-    const keys = Object.keys(updateFields);
-    const changesArray = keys.map((key) => {
-      const value = updateFields[key];
-      return `${key}: ${value};`;
+
+    const changes = {};
+    for (const [key, value] of Object.entries(updateFields)) {
+      changes[key] = value;
+    }
+
+    await createAudit("UPDATE", "SUPPLIER", supplier.id, userId, {
+      id: supplier.id,
+      changes: [changes],
     });
-    const changes = changesArray.join(", ");
-    await createAudit(
-      "UPDATE",
-      "SUPPLIER",
-      userId,
-      `${JSON.stringify(changes)}`
-    );
     return supplierUpdate;
   } catch (error) {
     throw error;

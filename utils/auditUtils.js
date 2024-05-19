@@ -1,16 +1,28 @@
-const { Sequelize, QueryTypes } = require("sequelize");
+const { QueryTypes } = require("sequelize");
 const sequelize = require("../db/sequelize");
-const AuditLog = require("../models/auditModel");
+const { EnumViolationError } = require("./errorUtils");
+const validEntityTypes = [
+  "PRODUCT",
+  "TRANSACTION",
+  "CUSTOMER",
+  "SUPPLIER",
+  "RESUPPLY",
+];
 
-async function createAudit(actionType, entityType, userId, details) {
+async function createAudit(actionType, entityType, entityId, userId, details) {
   try {
-    const query = `INSERT INTO audits (actionType, entityType, userId, details, timeStamp)
-    VALUES (:actionType, :entityType, :userId, :details, NOW())`;
+    if (!isValidEntityType(entityType)) {
+      throw new EnumViolationError("Can't save audit data.");
+    }
+
+    const query = `INSERT INTO audits (actionType, entityType, entityId, userId, details, timeStamp)
+    VALUES (:actionType, :entityType, :entityId, :userId, :details, NOW())`;
 
     await sequelize.query(query, {
       replacements: {
         actionType,
         entityType,
+        entityId,
         userId,
         details: `${JSON.stringify(details)}`,
       },
@@ -19,6 +31,10 @@ async function createAudit(actionType, entityType, userId, details) {
   } catch (error) {
     throw error;
   }
+}
+
+function isValidEntityType(entityType) {
+  return validEntityTypes.includes(entityType);
 }
 
 module.exports = { createAudit };

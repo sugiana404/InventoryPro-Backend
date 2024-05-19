@@ -8,7 +8,17 @@ async function createProduct(req, res, next) {
     if (!req.user) {
       throw new UnauthroizedError("Failed to create product.");
     }
-    const product = await productService.createProduct(req);
+    const { name, stock, price, category, sold, supplierId } = req.body;
+    const token = req.cookies.accessToken;
+    const product = await productService.createProduct(
+      name,
+      stock,
+      price,
+      category,
+      sold,
+      supplierId,
+      token
+    );
     sendSuccessResponse(res, 201, product, "Product added successfully");
   } catch (error) {
     next(error);
@@ -22,10 +32,11 @@ async function updateProduct(req, res, next) {
     }
     const productId = req.params.id;
     const updateFields = req.body;
+    const token = req.cookies.accessToken;
     const productUpdate = await productService.updateProduct(
       productId,
       updateFields,
-      req
+      token
     );
     sendSuccessResponse(
       res,

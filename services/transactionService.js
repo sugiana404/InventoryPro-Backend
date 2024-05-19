@@ -38,7 +38,9 @@ async function createTransaction(date, items, customerId, token) {
     );
 
     // Log to audit
-    await createAudit("CREATE", "TRANSACTION", userId, { id: transaction.id });
+    await createAudit("CREATE", "TRANSACTION", transaction.id, userId, {
+      id: transaction.id,
+    });
 
     return { transaction, items: createdItems };
   } catch (error) {
@@ -94,10 +96,15 @@ async function updateTransactionStatus(transactionId, status, token) {
       UserId: userId,
     });
 
+    const changes = {
+      status,
+      userId,
+    };
+
     // Log to audit
-    await createAudit("UPDATE", "TRANSACTION", userId, {
+    await createAudit("UPDATE", "TRANSACTION", transaction.id, userId, {
       id: transactionId,
-      status: status,
+      changes: [changes],
     });
 
     return transactionUpdate;

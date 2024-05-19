@@ -18,12 +18,16 @@ async function newReSupplyRequest(
       ProductId: productId,
       SupplierId: supplierId,
     });
-    await createAudit(
-      "CREATE",
-      "RESUPPLY",
-      userId,
-      `${JSON.stringify(reSupply)}`
-    );
+    const added = {
+      product,
+      stock,
+      productId,
+      supplierId,
+    };
+    await createAudit("CREATE", "RESUPPLY", reSupply.id, userId, {
+      id: reSupply.id,
+      added: [added],
+    });
     return reSupply;
   } catch (error) {
     console.log(`error: ${error}`);
@@ -41,18 +45,16 @@ async function updateReSupplyRequest(reSupplyId, updateFields, token) {
       );
     }
     const reSupplyRequestUpdate = await reSupplyRequest.update(updateFields);
-    const keys = Object.keys(updateFields);
-    const changesArray = keys.map((key) => {
-      const value = updateFields[key];
-      return `${key}: ${value}`;
+
+    const changes = {};
+    for (const [key, value] of Object.entries(updateFields)) {
+      changes[key] = value;
+    }
+
+    await createAudit("UPDATE", "RESUPPLY", reSupplyRequest.id, userId, {
+      id: reSupplyRequest.id,
+      changes: [changes],
     });
-    const changes = changesArray.join(", ");
-    await createAudit(
-      "UPDATE",
-      "RESUPPLY",
-      userId,
-      `${JSON.stringify(changes)}`
-    );
     return reSupplyRequestUpdate;
   } catch (error) {
     throw error;

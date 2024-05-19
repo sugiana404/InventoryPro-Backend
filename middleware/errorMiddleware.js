@@ -5,6 +5,7 @@ const {
   UserNotSignInError,
   UnauthroizedError,
   EnumViolationError,
+  BadRequestError,
 } = require("../utils/errorUtils");
 
 const errorHandler = (err, req, res, next) => {
@@ -75,6 +76,16 @@ const errorHandler = (err, req, res, next) => {
       },
     };
     return res.status(400).json(errorResponse);
+  }
+
+  if (err instanceof BadRequestError) {
+    const errorResponse = {
+      error: {
+        code: "BAD_REQUEST_ERROR",
+        message: err.message,
+        details: "Request can't be processed due to bad request error.",
+      },
+    };
   }
 
   const genericErrorResponse = {

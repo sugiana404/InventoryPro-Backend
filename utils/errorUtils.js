@@ -25,7 +25,7 @@ class AddDataError extends Error {
 class UserNotSignInError extends Error {
   constructor(message) {
     super(message);
-    this.name = "UserNotSignIn";
+    this.name = "UserNotSignInError";
     this.statusCode = 401;
   }
 }
@@ -41,7 +41,7 @@ class UnauthroizedError extends Error {
 class PageNotFoundError extends Error {
   constructor(message) {
     super(message);
-    this.name = "Page Not Found";
+    this.name = "PageNotFoundError";
     this.statusCode = 404;
   }
 }
@@ -54,6 +54,14 @@ class EnumViolationError extends Error {
   }
 }
 
+class BadRequestError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "BadRequestError";
+    this.statusCode = 400;
+  }
+}
+
 module.exports = {
   NotFoundError,
   IncorrectPasswordError,
@@ -62,4 +70,5 @@ module.exports = {
   UnauthroizedError,
   PageNotFoundError,
   EnumViolationError,
+  BadRequestError,
 };

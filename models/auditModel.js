@@ -17,6 +17,10 @@ const AuditLog = sequelize.define("Audit", {
     ),
     allowNull: false,
   },
+  entityId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
